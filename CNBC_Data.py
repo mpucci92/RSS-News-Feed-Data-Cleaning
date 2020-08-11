@@ -1,12 +1,26 @@
-from const import DIR, date_today, logger
+from const import DIR, date_today
 from bs4 import BeautifulSoup
-import pandas as pd
 import requests
 import sys, os
+import hashlib
+import json
+from glob import glob
+import pandas as pd
+import numpy as np
+import logging
+from time import gmtime, strftime, localtime
+import datetime as datetime
 
+
+# logging information #
+log_path = "/home/zqretrace/scripts/cnbc_logs/logs_CNBC.log"
+logging.basicConfig(filename=log_path,format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', datefmt='%m/%d/%Y %H:%M:%S',level=logging.DEBUG)
+
+# Local Time setting
+localtime = strftime("%Y-%m-%d %H-%M-%S", localtime())
 
 URL = "https://www.cnbc.com/quotes/?symbol={ticker}&qsearchterm={ticker}&tab=news"
-path ="$HOME/data/tickers_yf.csv"
+path ="/home/zqretrace/data/tickers_yf.csv"
 df = pd.read_csv(path)
 TICKERS = list(df.Ticker)
 ticker_list = []
@@ -33,9 +47,10 @@ def get_news(ticker):
 	        continue
 
 	    title = a.find("span").text
-	    articles.append([title, note.text, href])
 
-	df = pd.DataFrame(articles, columns = ['title', 'date', 'link'])
+	    articles.append([title, note.text, href,localtime])
+
+	df = pd.DataFrame(articles, columns = ['title', 'date', 'link','acquisition time'])
 	if len(df) == 0:
 		pass
 
@@ -54,15 +69,14 @@ if __name__ == '__main__':
 
 		try:
 			get_news(ticker)
-			logger.info('%s:Completed',ticker)
+			logging.info('%s:Completed',ticker)
 			ticker_list.append(ticker)
 			current_complete = (len(ticker_list)/len(TICKERS))*100
-			logger.info('Current Percentage: %f %s', current_complete, percent)
+			logging.info('Current Percentage: %f %s', current_complete, percent)
 
 		except Exception as e:
-			logger.warning('Error Message: %s:%s', ticker,e)
+			logging.warning('Error Message: %s:%s', ticker,e)
 			continue
 
 	percent_successful = (len(ticker_list)/len(TICKERS))*100
-	logger.info('Percentage of successful tickers: %f  %s', percent_successful,percent)
-
+	logging.info('Percentage of successful tickers: %f  %s', percent_successful,percent)

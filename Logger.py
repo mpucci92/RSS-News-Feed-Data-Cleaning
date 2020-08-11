@@ -2,7 +2,6 @@ import re
 import logging
 from datetime import datetime
 import os
-from logger import logger
 
 date_today = datetime.today().strftime("%Y-%m-%d")
 percent = '%'
