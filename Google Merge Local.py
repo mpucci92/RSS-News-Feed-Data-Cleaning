@@ -34,7 +34,7 @@ data_to_be_merged = "D:\\GCP DATA BACKUP\\GoogleNews\\To Merge Csvs\\*.csv"
 
 
 for csvFile in glob(data_to_be_merged):
-    for line in open(csvFile, 'r',encoding="utf8"):
+    for line in open(csvFile, 'r',encoding="latin-1"):
             try:
                 line_split = line.split(',')
                 lines = line_split[1]
