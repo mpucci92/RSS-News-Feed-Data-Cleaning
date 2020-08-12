@@ -37,7 +37,7 @@ for csvFile in glob(data_to_be_merged):
     for line in open(csvFile, 'r',encoding="latin-1"):
             try:
                 line_split = line.split(',')
-                lines = line_split[1]
+                lines = line_split[3]
                 data_md5 = str(hashlib.md5(json.dumps(lines, sort_keys=True).encode('utf-8')).hexdigest())
 
 
@@ -62,7 +62,11 @@ with open("D:\\Merge Project\\Hashlists\\Google_Hashlist.txt", 'w') as output:
 
 with open('D:\\GCP DATA BACKUP\\GoogleNews\\Final\\Google_Merged_%s' % localtime +'.csv', 'w') as Merged:
     for line in line_list:
-        Merged.write(line)
+        try:
+            Merged.write(line)
+        except Exception as e:
+            logging.info('%s FAIL'%(line))
+            pass
 
 import os
 import tarfile
